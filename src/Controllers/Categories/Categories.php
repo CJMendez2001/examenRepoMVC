@@ -25,33 +25,44 @@ class Categories extends PublicController
     {
         $this->getParamsFromContext();
         $this->getParams();
+        
         $tmpCategories = DaoCategories::getCategories(
             $this->partialName,
             $this->status,
             $this->orderBy,
             $this->orderDescending,
-            $this->pageNumber - 1,
+            ($this->pageNumber - 1) * $this->itemsPerPage,
             $this->itemsPerPage
         );
+        
         $this->categories = $tmpCategories["categories"];
         $this->categoriesCount = $tmpCategories["total"];
         $this->pages = $this->categoriesCount > 0 ? ceil($this->categoriesCount / $this->itemsPerPage) : 1;
+        
         if ($this->pageNumber > $this->pages) {
             $this->pageNumber = $this->pages;
         }
+        
         $this->setParamsToContext();
         $this->setParamsToDataView();
-        Renderer::render("categories/categories", $this->viewData);
+        Renderer::render("categories/categories", $this->viewData); 
     }
 
     private function getParams(): void
     {
         $this->partialName = isset($_GET["partialName"]) ? $_GET["partialName"] : $this->partialName;
-        $this->status = isset($_GET["status"]) && in_array($_GET["status"], ['1', '0', '']) ? $_GET["status"] : $this->status;
+        $this->status = isset($_GET["status"]) && in_array($_GET["status"], ['1', '0', 'EMP']) ? $_GET["status"] : $this->status;
+        
+        if ($this->status === "EMP") {
+            $this->status = "";
+        }
+        
         $this->orderBy = isset($_GET["orderBy"]) && in_array($_GET["orderBy"], ["CategoryID", "CategoryName", "CreatedDate", "clear"]) ? $_GET["orderBy"] : $this->orderBy;
+        
         if ($this->orderBy === "clear") {
             $this->orderBy = "";
         }
+        
         $this->orderDescending = isset($_GET["orderDescending"]) ? boolval($_GET["orderDescending"]) : $this->orderDescending;
         $this->pageNumber = isset($_GET["pageNum"]) ? intval($_GET["pageNum"]) : $this->pageNumber;
         $this->itemsPerPage = isset($_GET["itemsPerPage"]) ? intval($_GET["itemsPerPage"]) : $this->itemsPerPage;
@@ -65,8 +76,14 @@ class Categories extends PublicController
         $this->orderDescending = boolval(Context::getContextByKey("categories_orderDescending"));
         $this->pageNumber = intval(Context::getContextByKey("categories_page"));
         $this->itemsPerPage = intval(Context::getContextByKey("categories_itemsPerPage"));
-        if ($this->pageNumber < 1) $this->pageNumber = 1;
-        if ($this->itemsPerPage < 1) $this->itemsPerPage = 10;
+        
+        if ($this->pageNumber < 1) {
+            $this->pageNumber = 1;
+        }
+        
+        if ($this->itemsPerPage < 1) {
+            $this->itemsPerPage = 10;
+        }
     }
 
     private function setParamsToContext(): void
@@ -90,25 +107,32 @@ class Categories extends PublicController
         $this->viewData["categoriesCount"] = $this->categoriesCount;
         $this->viewData["pages"] = $this->pages;
         $this->viewData["categories"] = $this->categories;
+        
         if ($this->orderBy !== "") {
             $orderByKey = "Order" . ucfirst($this->orderBy);
             $orderByKeyNoOrder = "OrderBy" . ucfirst($this->orderBy);
             $this->viewData[$orderByKeyNoOrder] = true;
+            
             if ($this->orderDescending) {
                 $orderByKey .= "Desc";
             }
+            
             $this->viewData[$orderByKey] = true;
         }
-        $statusKey = "status_" . ($this->status === "" ? "ALL" : $this->status);
+        
+        $statusKey = "status_" . ($this->status === "" ? "EMP" : $this->status);
         $this->viewData[$statusKey] = "selected";
+        
         $pagination = Paging::getPagination(
             $this->categoriesCount,
             $this->itemsPerPage,
             $this->pageNumber,
-            "index.php?page=Categories_Categories",
+            "index.php?page=Categories_Categories", 
             "Categories_Categories"
         );
+        
         $this->viewData["pagination"] = $pagination;
     }
 }
+
 ?>

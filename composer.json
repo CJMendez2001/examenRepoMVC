@@ -1,6 +1,7 @@
 {
     "autoload": {
       "psr-4": {"":"src/"}
+      
     },
     "require": {
         "phpdocumentor/phpdocumentor": "^3.0",

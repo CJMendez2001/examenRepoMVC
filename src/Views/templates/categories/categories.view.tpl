@@ -9,7 +9,7 @@
           <input class="col-9" type="text" name="partialName" id="partialName" value="{{partialName}}" />
           <label class="col-3" for="status">Estado</label>
           <select class="col-9" name="status" id="status">
-              <option value="EMP" {{status_EMP}}>Todos</option>
+              <option value="" {{status_EMP}}>Todos</option>
               <option value="1" {{status_ACTIVE}}>Activo</option>
               <option value="0" {{status_INACTIVE}}>Inactivo</option>
           </select>
@@ -71,7 +71,7 @@
         <td class="right">
           {{CreatedDate}}
         </td>
-        <td class="center">{{CategoryStatusDsc}}</td>
+        <td class="center">{{IsActive}}</td>
         <td class="center">
           <a href="index.php?page=Categories-Category&mode=UPD&CategoryID={{CategoryID}}">Editar</a>
           &nbsp;

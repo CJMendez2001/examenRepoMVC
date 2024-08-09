@@ -74,3 +74,27 @@ CREATE TABLE
         `bitusuario` bigint(18) DEFAULT NULL,
         PRIMARY KEY (`bitacoracod`)
     ) ENGINE = InnoDB AUTO_INCREMENT = 10 DEFAULT CHARSET = utf8;
+
+    INSERT INTO usuario (useremail, username, userpswd, userfching, userpswdest, userpswdexp, userest, useractcod, userpswdchg, usertipo)
+VALUES (
+    'carlos.mendez@example.com', 
+    'Carlos Mendez', 
+    SHA2('tu_contraseña_segura', 256), 
+    NOW(), 
+    'ACT', 
+    DATE_ADD(NOW(), INTERVAL 90 DAY), 
+    'ACT', 
+    NULL, 
+    NULL, 
+    'ADM'
+);
+
+INSERT INTO roles (rolescod, rolesdsc, rolesest) VALUES
+('ADM', 'Administrador', 'ACT'),
+('USR', 'Usuario', 'ACT'),
+('GUE', 'Invitado', 'INA');
+
+INSERT INTO `funciones` (`fncod`, `fndsc`, `fnest`, `fntyp`) 
+VALUES ('FN001', 'Gestión de usuarios', 'ACT', 'ADM'),
+       ('FN002', 'Control de acceso', 'INA', 'SEC'),
+       ('FN003', 'Reportes y estadísticas', 'ACT', 'REP');
